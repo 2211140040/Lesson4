@@ -9,9 +9,10 @@ class TopController < ApplicationController
     
     def login
         user = User.find_by(uid: params[:uid])
-        
-        if user && user.authenticate(params[:pass])
-            session[:login_uid] = user.uid
+        if user and BCrypt::Password.new(user.pass) == params[:pass]
+            logger.debug "-" * 50
+            logger.debug user
+            session[:login_uid] = params[:uid]
             redirect_to top_main_path
         else
             render "error", status:422
